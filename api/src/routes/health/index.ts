@@ -1,6 +1,5 @@
 import express, {NextFunction, Request, Response} from "express";
-
-import {Badge} from "@/controllers/badge/badge.class";
+import {context} from "@/main";
 
 const router = express.Router({
 	caseSensitive: false,
@@ -8,13 +7,13 @@ const router = express.Router({
 });
 
 router.get('/', function (req: Request, res: Response) {
-	const badge = new Badge(req.query);
-	
-	console.log(req.query)
-	
-	res.status(200)
-		.setHeader("Content-Type", "image/svg+xml")
-		.send(badge.toSVG());
+	res.status(200).jsonFull(
+		process.memoryUsage()
+	)
+})
+
+router.get('/statistics', function (req: Request, res: Response) {
+	res.status(200).jsonFull(context);
 })
 
 export {router};
