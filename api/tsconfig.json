@@ -3,6 +3,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@mw": ["middleware/*"],
+      "@routes": ["routes/*"],
+      "@controllers": ["controllers/*"],
+      "@utils": ["utils/*"],
+      "@assets": ["/assets"]
     },
     "outDir": "dist",
     "target": "ES2022",
