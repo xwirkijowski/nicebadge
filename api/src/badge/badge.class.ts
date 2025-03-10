@@ -97,6 +97,12 @@ export class Badge {
 	}
 	
 	private calculateContent () {
+		// Fallback content
+		if (!this.iconInstance && !this.label && !this.msg) {
+			this.label = "NiceBadge";
+			this.msg = "Make your own";
+		}
+		
 		this.title = ((this.label) ? `${this.label} | ${this.msg}` : this.msg) || 'NiceBadge';
 		
 		this.labelMetrics = (this.label) ? this.getTextMetrics(this.label, this.font) : undefined;
