@@ -1,5 +1,8 @@
 import Fastify, {FastifyRequest} from "fastify";
 import FastifyAutoload from "@fastify/autoload";
+import FastifyHelmet from "@fastify/helmet";
+
+import { globalLogger as log } from "@/utils/log";
 
 import {v4 as uuid} from "uuid";
 
@@ -28,24 +31,21 @@ const server = Fastify({
 
 const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
-// Autoloader for routes
-server.register(FastifyAutoload, {
-	dir: join(__dirname, 'routes')
+// Helmet.js plugin
+server.register(FastifyHelmet, {
+	global: true,
 })
 
-// Autoloader for plugins
-server.register(FastifyAutoload, {
-	dir: join(__dirname, 'plugins')
-})
-
+/**
 server.addHook('onRequest', (req, res, done) => {
-	console.log(`[${new Date().toISOString()}] [>] ${req.id} ${req.url}`)
+	log.request(req.id,req.url)
 	
 	done();
 })
+*/
 
 server.addHook('onResponse', (req, res, done) => {
-	console.log(`[${new Date().toISOString()}] [<] ${req.id} ${req.url}`)
+	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url)
 	
 	done();
 })
@@ -60,6 +60,16 @@ server.decorateReply("sendJSON", function (requestId: FastifyRequest['id'], payl
 			requestId,
 		}
 	});
+})
+
+// Autoloader for plugins
+server.register(FastifyAutoload, {
+	dir: join(__dirname, 'plugins')
+})
+
+// Autoloader for routes
+server.register(FastifyAutoload, {
+	dir: join(__dirname, 'routes')
 })
 
 // Root endpoint
