@@ -40,13 +40,14 @@ async function routes (fastify: FastifyInstance) {
 	 */
 	fastify.get<{
 		Querystring: IQuerystring,
-	}>('/', routerConfig, async (req, res): Promise<any> => handleRoute(req, res));
+	}>('/', routerConfig, async (req, res): Promise<any> => handleRoute(req, res, true, 'query'));
 
 	/**
 	 * Builds basic badges with only text, background color options
 	 */
 	fastify.get<{Params: IParams;}>('/:label/:msg?', routerConfig, async (req, res) => handleRoute(req, res));
 	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg/:labelBg?', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg/:labelBg/:icon', routerConfig, async (req, res) => handleRoute(req, res));
 }
 
 export default routes;

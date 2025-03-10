@@ -2,9 +2,9 @@ import {FastifyReply, FastifyRequest} from "fastify";
 import {Badge} from "@/badge/badge.class";
 import {globalLogger as log} from "@/utils/log";
 
-export async function handleRoute (req: FastifyRequest, res: FastifyReply, withIcon: boolean = true): Promise<void> {
+export async function handleRoute (req: FastifyRequest, res: FastifyReply, withIcon: boolean = true, source: 'params'|'query' = 'params'): Promise<void> {
 	try {
-		const badge = new Badge(req.params);
+		const badge = new Badge(req[source]);
 		
 		if (withIcon) {
 			await badge.resolveIcon();
