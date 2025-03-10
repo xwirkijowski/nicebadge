@@ -1,3 +1,5 @@
+import { globalLogger as log } from "@/utils/log";
+
 import {Badge} from "@/badge/badge.class";
 import {FastifyInstance, RouteOptions} from "fastify";
 
@@ -16,11 +18,19 @@ async function routes (fastify: FastifyInstance, options: RouteOptions) {
 		size?: string;
 	}
 	
+	log.info('Loaded badge routes.')
+	
 	fastify.get<{
 		Querystring: IQuerystring,
-	}>('', async (req, res): Promise<any> => {
+	}>('/', {
+		helmet: {
+			crossOriginResourcePolicy: {policy: "cross-origin"},
+		}
+	}, async (req, res): Promise<any> => {
 		const query = req.query;
 		const badge = new Badge(query)
+		await badge.resolveIcon();
+		
 		return res.code(200).type("image/svg+xml").send(badge.toSVG());
 	})
 }
