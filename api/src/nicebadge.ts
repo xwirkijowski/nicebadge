@@ -4,12 +4,20 @@ import {TIcon} from "./assets/icons";
 import {registerFont} from "canvas";
 
 class NiceBadge {
-	areFontsLoaded = false;
-	areIconsLoaded = false;
-	arePresetsLoaded = false;
+	startup?: Date
+	
+	requests?: number
+	
+	areFontsLoaded: boolean = false;
+	areIconsLoaded: boolean = false;
+	arePresetsLoaded: boolean = false;
 	
 	fonts: string[] = [];
 	icons: TIcon[] = [];
+	
+	setStartup (date: Date): void {
+		this.startup = date;
+	}
 	
 	setupFonts (fontList: TFont[]): void {
 		if (this.areFontsLoaded) return;

@@ -35,6 +35,8 @@ sizes.large = {
 	rx: 2,
 };
 
+// @todo: Switch to table lookup for text calculation
+
 export class Badge {
 	icon?: string;
 	iconSVG?: string;
@@ -209,6 +211,9 @@ export class Badge {
 			rx: `${this.sizeObj.rx}px`
 		})
 		
+		/**
+		 * @todo: Handle colors better, add functionality to replace all fills, if no color specified leave as is
+		 */
 		const nestedSVG: string|undefined = this.iconSVG?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
 		
 		const svg: string[] = [

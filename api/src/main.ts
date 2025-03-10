@@ -1,52 +1,87 @@
-import express, {NextFunction, Request, Response} from "express";
+import Fastify, {FastifyRequest} from "fastify";
+import FastifyAutoload from "@fastify/autoload";
 
-import {router as badge} from '@/routes/badge';
-import {router as health} from '@/routes/health';
-import RequestExtender from "@/middleware/requestExtender";
-import ResponseExtender from "@/middleware/responseExtender";
+import {v4 as uuid} from "uuid";
+
+import {dirname, join} from "node:path";
+import {fileURLToPath} from "node:url";
 
 const config = {
 	port: 3000,
 }
 
-export const statistics = {
-	requests: 0,
-}
-
-export type TContext = {
-	startup?: Date,
-	statistics: object
-}
-
-export const context: TContext = {
-	startup: undefined,
-	statistics
+declare module 'fastify' {
+	interface FastifyReply {
+		sendJSON: (req: FastifyRequest['id'], payload: object) => void
+	}
 }
 
 import NiceBadge from "@/nicebadge";
-
 import FontList from "./assets/fonts";
 import IconList from "./assets/icons";
 
 NiceBadge.setupFonts(FontList);
 NiceBadge.applyIcons(IconList);
 
-// Create the server instance
-const app = express();
+const server = Fastify({
+	// http2: true,
+	ignoreTrailingSlash: true,
+	ignoreDuplicateSlashes: true,
+	maxParamLength: 64,
+	requestIdHeader: false,
+	genReqId: (_): string => uuid(),
+	logger: false, // @todo: Implement custom logger
+});
 
-app.use(RequestExtender);
-app.use(ResponseExtender);
+const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
-// Default route
-app.get("/", (req: Request, res: Response) => {
-	res.status(200).jsonFull({'message': 'Hello World!'});
+// Autoloader for routes
+server.register(FastifyAutoload, {
+	dir: join(__dirname, 'routes')
 })
 
-app.use("/badge", badge); // Apply badge router
-app.use("/health", health); // Apply badge router
+// Autoloader for plugins
+server.register(FastifyAutoload, {
+	dir: join(__dirname, 'plugins')
+})
 
-// Start the server
-app.listen(config.port, function () {
-	context.startup = new Date();
-	console.log(`App listening on port ${config.port}`);
-});
+server.addHook('onRequest', (req, res, done) => {
+	console.log(`[${new Date().toISOString()}] [>] ${req.id} ${req.url}`)
+	
+	done();
+})
+
+server.addHook('onResponse', (req, res, done) => {
+	console.log(`[${new Date().toISOString()}] [<] ${req.id} ${req.url}`)
+	
+	done();
+})
+
+server.decorateReply("sendJSON", function (requestId: FastifyRequest['id'], payload: object) {
+	this.status(200);
+	this.type("application/json");
+	this.send({
+		status: this.statusCode,
+		data: payload,
+		metadata: {
+			requestId,
+		}
+	});
+})
+
+// Root endpoint
+server.get('/', async (req, res) => {
+	res.sendJSON(req.id, {'message': 'Hello World!'});
+})
+
+server.listen(({
+	port: config.port,
+}), (err, addr) => {
+	if (err) { // Exit on error
+		console.error('Failed to start server!', err);
+		process.exit(1);
+	}
+	
+	NiceBadge.setStartup(new Date());
+	console.log(`App listening on port ${config.port} (${addr})!`);
+})

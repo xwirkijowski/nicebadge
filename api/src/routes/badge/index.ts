@@ -1,20 +1,28 @@
-import express, {NextFunction, Request, Response} from "express";
+import {Badge} from "@/badge/badge.class";
+import {FastifyInstance, RouteOptions} from "fastify";
 
-import {Badge} from "@/controllers/badge/badge.class";
-
-const router = express.Router({
-	caseSensitive: false,
-	strict: true
-});
-
-router.get('/', function (req: Request, res: Response) {
-	const badge = new Badge(req.query);
+async function routes (fastify: FastifyInstance, options: RouteOptions) {
+	interface IQuerystring {
+		icon?: string;
+		iconSVG?: string;
+		iconColor?: string;
+		label?: string;
+		labelColor?: string;
+		labelBg?: string;
+		msg?: string;
+		msgColor?: string;
+		msgBg?: string;
+		font?: string;
+		size?: string;
+	}
 	
-	console.log(req.query)
-	
-	res.status(200)
-		.setHeader("Content-Type", "image/svg+xml")
-		.send(badge.toSVG());
-})
+	fastify.get<{
+		Querystring: IQuerystring,
+	}>('', async (req, res): Promise<any> => {
+		const query = req.query;
+		const badge = new Badge(query)
+		return res.code(200).type("image/svg+xml").send(badge.toSVG());
+	})
+}
 
-export {router};
+export default routes;
