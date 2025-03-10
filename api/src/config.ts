@@ -25,14 +25,27 @@ const configParameters: TConfigParameter[] = [
 const config: Record<string, string|number|boolean> = {};
 
 configParameters.forEach((param) => {
-	if (process.env[param.name] && typeof process.env[param.name] === param.type) {
-		config[param.name as string] = process.env[param.name]!;
+	if (process.env[param.name]) {
+		let value: string|number|boolean = process.env[param.name]!;
+		value = (param.type === 'boolean')
+			? (value.toLowerCase() === "true")
+			: (param.type === 'number')
+				? Number(value)
+				: value;
+		
+		if (param.type === 'number' && isNaN(value as number)) {
+			log.fatal(`Failed to parse ${param.name} environment variable value, received ${value}, shutting down...`);
+			throw new Error(`Invalid parameter "${param.name}" value, ${value}`);
+		}
+		
+		config[param.name] = value;
 	} else {
 		if (!!param?.required) {
 			log.fatal(`Could not load ${param.name} required environment variable, shutting down...`);
 			process.exit(1);
-		} else if (!!param?.default) {
-			config[param.name as string] = param.default;
+		} else if (param?.default !== undefined) {
+			config[param.name] = param.default;
+			log.std(`Optional environment variable ${param.name} not provided, using default (${param.default}).`)
 		} else {
 			log.std(`Optional environment variable ${param.name} not provided.`)
 		}
