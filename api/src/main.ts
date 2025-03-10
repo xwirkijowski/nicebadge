@@ -6,22 +6,15 @@ import {v4 as uuid} from "uuid";
 import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 
-const config = {
-	port: 3000,
-}
-
 declare module 'fastify' {
 	interface FastifyReply {
 		sendJSON: (req: FastifyRequest['id'], payload: object) => void
 	}
 }
 
-import NiceBadge from "@/nicebadge";
-import FontList from "./assets/fonts";
-import IconList from "./assets/icons";
+import config from "@/config";
 
-NiceBadge.setupFonts(FontList);
-NiceBadge.applyIcons(IconList);
+import NiceBadge from "@/nicebadge";
 
 const server = Fastify({
 	// http2: true,
@@ -75,13 +68,13 @@ server.get('/', async (req, res) => {
 })
 
 server.listen(({
-	port: config.port,
+	port: config.PORT as number,
 }), (err, addr) => {
 	if (err) { // Exit on error
-		console.error('Failed to start server!', err);
+		log.fatal('Unexpected error while starting fastify server, shutting down...', err);
 		process.exit(1);
 	}
 	
 	NiceBadge.setStartup(new Date());
-	console.log(`App listening on port ${config.port} (${addr})!`);
+	log.success(`NiceBadge instance listening on port ${config.PORT} (${addr})!`);
 })
