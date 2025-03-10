@@ -97,13 +97,7 @@ export class Badge {
 	}
 	
 	private calculateContent () {
-		// Fallback content
-		if (!this.iconInstance && !this.label && !this.msg) {
-			this.label = "NiceBadge";
-			this.msg = "Make your own";
-		}
-		
-		this.title = (this.label) ? `${this.label} | ${this.msg}` : this.msg;
+		this.title = ((this.label) ? `${this.label} | ${this.msg}` : this.msg) || 'NiceBadge';
 		
 		this.labelMetrics = (this.label) ? this.getTextMetrics(this.label, this.font) : undefined;
 		this.msgMetrics = (this.msg) ? this.getTextMetrics(this.msg, this.font) : undefined;
@@ -131,7 +125,7 @@ export class Badge {
 			y: this.sizeObj.paddingY,
 			width: this.sizeObj.iconSize,
 			height: this.sizeObj.iconSize,
-			fill: this.iconColor,
+			fill: this.iconColor || this.labelColor,
 		} : undefined
 		
 		const labelTag = this.label ? {
