@@ -1,4 +1,5 @@
-import NiceBadge from "@/nicebadge";
+import {Icon} from "./icon";
+
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
 
 type TBadgeSize = {
@@ -39,7 +40,7 @@ sizes.large = {
 
 export class Badge {
 	icon?: string;
-	iconSVG?: string;
+	iconInstance?: Icon;
 	iconColor?: string;
 	label?: string;
 	labelColor: string = '#ffffff';
@@ -55,7 +56,7 @@ export class Badge {
 	
 	[field: string]: string | unknown;
 	
-	constructor (args: any) {
+	constructor(args: any) {
 		const fields: string[] = [
 			'icon',
 			'iconColor',
@@ -78,26 +79,32 @@ export class Badge {
 			}
 		});
 		
-		// Handle icon
-		if (this.icon) {
-			this.iconSVG = NiceBadge.icons.find(icon => icon.name === this.icon)?.svg || undefined;
-			
-			if (this.iconSVG) this.iconColor ||= this.labelColor;
-			else this.icon = undefined
+		if (this.size in sizes) this.sizeObj = sizes[this.size];
+		
+		return this;
+	}
+	
+	async resolveIcon () {
+		if (!this.icon) return;
+		
+		try {
+			this.iconInstance = await new Icon(this.icon).resolve();
+		} catch (e) {
+			console.error(e);
 		}
 		
+		return this;
+	}
+	
+	private calculateContent () {
 		// Fallback content
-		if (!this.icon && !this.label && !this.msg) {
+		if (!this.iconInstance && !this.label && !this.msg) {
 			this.label = "NiceBadge";
 			this.msg = "Make your own";
 		}
 		
 		this.title = (this.label) ? `${this.label} | ${this.msg}` : this.msg;
 		
-		if (this.size in sizes) this.sizeObj = sizes[this.size];
-	}
-	
-	private calculateContent () {
 		this.labelMetrics = (this.label) ? this.getTextMetrics(this.label, this.font) : undefined;
 		this.msgMetrics = (this.msg) ? this.getTextMetrics(this.msg, this.font) : undefined;
 		
@@ -214,7 +221,7 @@ export class Badge {
 		/**
 		 * @todo: Handle colors better, add functionality to replace all fills, if no color specified leave as is
 		 */
-		const nestedSVG: string|undefined = this.iconSVG?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
+		const nestedSVG: string|undefined = this.iconInstance?.svg?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
 		
 		const svg: string[] = [
 			`<svg ${svgAttrs}>`,
