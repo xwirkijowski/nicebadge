@@ -1,6 +1,6 @@
 import { globalLogger as log } from "@/utils/log";
 
-const configTimestamp: number = performance.now();
+export const configTimestamp: number = performance.now();
 
 log.std("Starting NiceBadge instance...");
 

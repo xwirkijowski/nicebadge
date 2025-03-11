@@ -15,7 +15,7 @@ declare module 'fastify' {
 	}
 }
 
-import config from "@/config";
+import config, {configTimestamp} from "@/config";
 
 import NiceBadge from "@/nicebadge";
 
@@ -88,5 +88,5 @@ server.listen(({
 	}
 	
 	NiceBadge.setStartup(new Date());
-	log.success(`NiceBadge instance listening on port ${config.PORT} (${addr})!`);
+	log.success(`NiceBadge instance listening on port ${config.PORT} (${addr})! Started in ${(performance.now() - configTimestamp).toFixed(2)} ms.`);
 })
