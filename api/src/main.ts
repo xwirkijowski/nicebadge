@@ -77,6 +77,8 @@ server.get('/', async (req, res) => {
 	res.sendJSON(req.id, {'message': 'Hello World!'});
 })
 
+NiceBadge.registerIconProviders()
+
 server.listen(({
 	port: config.PORT as number,
 }), (err, addr) => {

@@ -1,4 +1,4 @@
-import {Icon} from "./icon";
+import {Icon} from "../icon/icon";
 
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
 
