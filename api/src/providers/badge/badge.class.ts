@@ -268,7 +268,13 @@ export class Badge {
 		/**
 		 * @todo: Handle colors better, add functionality to replace all fills, if no color specified leave as is
 		 */
-		const nestedSVG: string|undefined = this.iconInstance?.svg?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
+		const nestedSVG: string|undefined = this.iconInstance?.svg
+			?.replace(/x="\d+"/, '')
+			?.replace(/y="\d+"/, '')
+			?.replace(/width="\d+"/, '')
+			?.replace(/height="\d+"/, '')
+			?.replace(/fill="\S+"/, '')
+			?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
 		
 		const structuredSVG: string[] = [
 			`<svg ${svgAttrs}>`,
