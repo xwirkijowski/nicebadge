@@ -8,7 +8,7 @@ export class Icon {
 	svg?: string;
 	
 	constructor (queryIcon: string, provider: RegisteredIconProviders = "simple-icons", svg?: string) {
-		if (queryIcon.startsWith("data:image/svg")) {
+		if (queryIcon.startsWith("data:image/svg")) { // Recognize pattern and force provider to `custom`
 			this.encoded = queryIcon;
 			this.provider = "custom";
 		} else {
@@ -19,7 +19,12 @@ export class Icon {
 		this.svg = svg;
 	}
 	
-	async resolve () {
+	/**
+	 * Resolve icon slug or encoded value to SVG by using appropriate provider.
+	 *
+	 * @async
+	 */
+	async resolve (): Promise<this> {
 		if (!this.provider) { throw new Error('No provider provided'); }
 		if (!NiceBadge.iconProviderNames.includes(this.provider)) { throw new Error('Provider not on registered provider list'); }
 		
@@ -27,7 +32,7 @@ export class Icon {
 		if (!provider) { throw new Error('Could not find provider'); }
 		
 		try {
-			const resolvedIcon = await provider.resolve(this)
+			const resolvedIcon: string = await provider.resolve(this)
 			this.svg = (resolvedIcon) ? resolvedIcon : ''; // @todo: Implement some kind of fallback icon
 		} catch (e) {
 			console.error('Failed to resolve', e);

@@ -1,6 +1,7 @@
-import {Icon} from "../icon/icon";
-
+import crypto from "node:crypto";
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
+
+import {Icon} from "../icon/icon";
 
 type TBadgeSize = {
 	paddingX: number;
@@ -45,32 +46,36 @@ export class Badge {
 	label?: string;
 	labelColor: string = '#ffffff';
 	labelBg?: string = '#111111';
-	labelMetrics?: TextMetrics;
 	msg?: string;
 	msgColor: string = '#111111';
 	msgBg?: string = '#eeeeee';
-	msgMetrics?: TextMetrics;
 	font: string = 'Inter';
 	size: string = 'medium';
+	
+	labelMetrics?: TextMetrics;
+	msgMetrics?: TextMetrics;
 	sizeObj: TBadgeSize = sizes.medium;
+	
+	cacheKey: string;
 	
 	[field: string]: string | unknown;
 	
+	// List of valid arguments
+	private arguments: string[] = [
+		'icon',
+		'iconColor',
+		'label',
+		'labelColor',
+		'labelBg',
+		'msg',
+		'msgColor',
+		'msgBg',
+		'font',
+		'size',
+	]
+	
 	constructor(args: any) {
-		const fields: string[] = [
-			'icon',
-			'iconColor',
-			'label',
-			'labelColor',
-			'labelBg',
-			'msg',
-			'msgColor',
-			'msgBg',
-			'font',
-			'size',
-		]
-		
-		fields.forEach((field: string): void => {
+		this.arguments.forEach((field: string): void => {
 			if (args[field]) {
 				const value: string = String(args[field]).normalize("NFKD").trim();
 				
@@ -79,9 +84,47 @@ export class Badge {
 			}
 		});
 		
+		this.cacheKey = this.createCacheKey();
+		
 		if (this.size in sizes) this.sizeObj = sizes[this.size];
 		
 		return this;
+	}
+	
+	/**
+	 * @async
+	 */
+	async materialize () {
+		if (this.cacheKey) {
+			// Check if badge exists in cache
+			// Leverage caching
+			
+			
+			
+			if (false) return; // Return if found
+		}
+		
+		if (this.icon) await this.resolveIcon();
+		
+		const svg: string = this.toSVG();
+		
+		// deposit to cache
+		
+		return svg;
+	}
+	
+	/**
+	 * Builds cache key from icon arguments (instance properties) and creates a SHA256 hash.
+	 * Empty or otherwise falsy arguments are skipped.
+	 *
+	 * Raw format: `icon|iconColor|label|(...)`
+	 *
+	 * @private
+	 * @returns void
+	 */
+	private createCacheKey(): string {
+		const cacheBase: string = this.arguments.reduce((acc: string, val: string): string => (this[val]) ? acc ? `${acc}|${this[val]}` : `${this[val]}` : acc, '')
+		return crypto.createHash('sha256').update(cacheBase).digest('hex');
 	}
 	
 	async resolveIcon () {
@@ -103,7 +146,11 @@ export class Badge {
 			this.msg = "Make your own";
 		}
 		
-		this.title = ((this.label) ? `${this.label} | ${this.msg}` : this.msg) || 'NiceBadge';
+		this.title = (this.label && this.msg)
+			? `${this.label} | ${this.msg}`
+			: (this.label)
+				? `${this.label}`
+				: 'NiceBadge';
 		
 		this.labelMetrics = (this.label) ? this.getTextMetrics(this.label, this.font) : undefined;
 		this.msgMetrics = (this.msg) ? this.getTextMetrics(this.msg, this.font) : undefined;
@@ -200,8 +247,8 @@ export class Badge {
 		return color;
 	}
 	
-	toSVG (): string {
-		const {width, height, iconTag, labelTag, labelRect, msgTag, msgRect} = this.calculateContent()
+	private toSVG (): string {
+		const {width, height, iconTag, labelTag, labelRect, msgTag, msgRect} = this.calculateContent();
 		
 		const svgAttrs: string = this.attr({
 			xmlns: 'http://www.w3.org/2000/svg',
@@ -223,23 +270,23 @@ export class Badge {
 		 */
 		const nestedSVG: string|undefined = this.iconInstance?.svg?.replace('<svg', `<svg ${this.attr(iconTag!)}`);
 		
-		const svg: string[] = [
+		const structuredSVG: string[] = [
 			`<svg ${svgAttrs}>`,
 				`<title>${this.title}</title>`,
 				`<clipPath id="border-radius"><rect ${clipRectAttr}></rect></clipPath>`,
 				`<g clip-path="url(#border-radius)">`,
-					...((this.label || this.icon) ? `<rect ${this.attr(labelRect!)}></rect>` : ''),
-					...((this.label || this.icon) ? `<rect ${this.attr(labelRect!)}></rect>` : ''),
-					...((this.msg) ? `<rect ${this.attr(msgRect!)}></rect>` : ''),
+					((this.label || this.icon) ? `<rect ${this.attr(labelRect!)}></rect>` : ''),
+					((this.label || this.icon) ? `<rect ${this.attr(labelRect!)}></rect>` : ''),
+					((this.msg) ? `<rect ${this.attr(msgRect!)}></rect>` : ''),
 				`</g>`,
 				`<g>`,
-					...((nestedSVG) ? `${nestedSVG}` : ''),
-					...((this.label) ? `<text ${this.attr(labelTag!)}>${this.label}</text>` : ''),
-					...((this.msg) ? `<text ${this.attr(msgTag!)}>${this.msg}</text>` : ''),
+					((nestedSVG) ? `${nestedSVG}` : ''),
+					((this.label) ? `<text ${this.attr(labelTag!)}>${this.label}</text>` : ''),
+					((this.msg) ? `<text ${this.attr(msgTag!)}>${this.msg}</text>` : ''),
 				`</g>`,
 			`</svg>`
 		]
 		
-		return svg.join('');
+		return structuredSVG.join('');
 	}
 }

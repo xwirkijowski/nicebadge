@@ -21,8 +21,8 @@ async function routes (fastify: FastifyInstance) {
 	/**
 	 * Builds label-only badge
 	 */
-	fastify.get<{Params: IParams;}>('/:label', routerConfig, async (req, res) => handleRoute(req, res, false));
-	fastify.get<{Params: IParams;}>('/:label/:labelBg/:labelColor?', routerConfig, async (req, res) => handleRoute(req, res, false));
+	fastify.get<{Params: IParams;}>('/:label', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label/:labelBg/:labelColor?', routerConfig, async (req, res) => handleRoute(req, res));
 }
 
 export default routes;

@@ -40,7 +40,7 @@ async function routes (fastify: FastifyInstance) {
 	 */
 	fastify.get<{
 		Querystring: IQuerystring,
-	}>('/', routerConfig, async (req, res): Promise<any> => handleRoute(req, res, true, 'query'));
+	}>('/', routerConfig, async (req, res): Promise<any> => handleRoute(req, res, 'query'));
 
 	/**
 	 * Builds basic badges with only text, background color options
