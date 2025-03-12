@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
-
 import {Icon} from "../icon/icon";
+import RedisClient from "@/cache/client";
 
 type TBadgeSize = {
 	paddingX: number;
@@ -95,20 +95,14 @@ export class Badge {
 	 * @async
 	 */
 	async materialize () {
-		if (this.cacheKey) {
-			// Check if badge exists in cache
-			// Leverage caching
-			
-			
-			
-			if (false) return; // Return if found
-		}
+		const cached: string|null = await RedisClient.get(`badge_+${this.cacheKey}`);
+		if (cached) return cached;
 		
 		if (this.icon) await this.resolveIcon();
 		
 		const svg: string = this.toSVG();
 		
-		// deposit to cache
+		await RedisClient.set(`badge_+${this.cacheKey}`, svg);
 		
 		return svg;
 	}
@@ -239,7 +233,6 @@ export class Badge {
 	}
 	
 	private parseColor (color: string): string {
-		
 		if (/^[0-9A-Fa-f]{6}$/.test(color)) {
 			return `#${color}`;
 		}

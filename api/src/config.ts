@@ -23,15 +23,17 @@ type TConfigParameter = {
 	REDIS_URL: {
 		type: "string",
 	},
-	REDIS_ADDR: {
+	REDIS_HOST: {
 		type: "string",
+		required: true,
 	},
 	REDIS_PORT: {
 		type: "number",
+		required: true,
 	}
 };
 
-const config: Record<string, string|number|boolean> = {};
+const config: Record<keyof typeof configParameters, string|number|boolean> = {};
 
 /**
  * Parses environment variables based on the defined config parameters.
