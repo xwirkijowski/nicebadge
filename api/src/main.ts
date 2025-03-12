@@ -1,23 +1,18 @@
+import {dirname, join} from "node:path";
+import {fileURLToPath} from "node:url";
+import {v4 as uuid} from "uuid";
 import Fastify, {FastifyRequest} from "fastify";
 import FastifyAutoload from "@fastify/autoload";
 import FastifyHelmet from "@fastify/helmet";
-
+import config, {configPerformance, configTimeStamp} from "@/config";
+import NiceBadge from "@/nicebadge";
 import { globalLogger as log } from "@/utils/log";
-
-import {v4 as uuid} from "uuid";
-
-import {dirname, join} from "node:path";
-import {fileURLToPath} from "node:url";
 
 declare module 'fastify' {
 	interface FastifyReply {
 		sendJSON: (req: FastifyRequest['id'], payload: object) => void
 	}
 }
-
-import config, {configTimestamp} from "@/config";
-
-import NiceBadge from "@/nicebadge";
 
 const server = Fastify({
 	// http2: true,
@@ -36,20 +31,13 @@ server.register(FastifyHelmet, {
 	global: true,
 })
 
-/**
-server.addHook('onRequest', (req, res, done) => {
-	log.request(req.id,req.url)
-	
-	done();
-})
-*/
-
 server.addHook('onResponse', (req, res, done) => {
 	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url)
 	
 	done();
 })
 
+// @todo: Switch to hook
 server.decorateReply("sendJSON", function (requestId: FastifyRequest['id'], payload: object) {
 	this.status(200);
 	this.type("application/json");
@@ -77,7 +65,7 @@ server.get('/', async (req, res) => {
 	res.sendJSON(req.id, {'message': 'Hello World!'});
 })
 
-NiceBadge.registerIconProviders()
+NiceBadge.registerIconProviders();
 
 server.listen(({
 	port: config.PORT as number,
@@ -87,6 +75,7 @@ server.listen(({
 		process.exit(1);
 	}
 	
-	NiceBadge.setStartup(new Date());
-	log.success(`NiceBadge instance listening on port ${config.PORT} (${addr})! Started in ${(performance.now() - configTimestamp).toFixed(2)} ms.`);
-})
+	NiceBadge.setStartTimestamp(configTimeStamp);
+	NiceBadge.setListenTimestamp(new Date());
+	log.success(`NiceBadge instance listening on port ${config.PORT} (${addr})! Started in ${(performance.now() - configPerformance).toFixed(2)} ms.`);
+});

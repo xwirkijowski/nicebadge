@@ -5,19 +5,22 @@ import {fileURLToPath} from "node:url";
 
 import {IconProvider, TIconProvider} from "@/providers/icon/icon.provider";
 
-const require = createRequire(import.meta.url);
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const require: NodeJS.Require = createRequire(import.meta.url);
+const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
 class NiceBadge {
-	startup?: Date
+	timestampStart?: Date;
+	timestampListen?: Date;
+	
 	readonly iconProviderList: TIconProvider[] = [];
 	readonly iconProviderNames: string[] = [];
 	
+	redisInstance?: unknown;
+	
 	requests?: number
 	
-	setStartup (date: Date): void {
-		this.startup = date;
-	}
+	setStartTimestamp(date: Date): void {this.timestampStart = date;}
+	setListenTimestamp (date: Date): void {this.timestampListen = date;}
 	
 	registerIconProviders (): void {
 		const directory: string = join(__dirname, "providers/icon");
