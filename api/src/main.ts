@@ -32,7 +32,7 @@ server.register(FastifyHelmet, {
 })
 
 server.addHook('onResponse', (req, res, done) => {
-	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url)
+	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url);
 	
 	done();
 })
