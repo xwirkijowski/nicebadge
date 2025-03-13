@@ -2,7 +2,7 @@ import {createClient} from "redis";
 import config from "@/config";
 
 const client = createClient({
-	url: `redis://${config.REDIS_HOST}:${config.REDIS_PORT}`
+	url: (config.REDIS_URL as string) || `redis://${config.REDIS_HOST}:${config.REDIS_PORT}`
 });
 
 // @todo: Circuit breaker
