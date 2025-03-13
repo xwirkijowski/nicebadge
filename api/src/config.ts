@@ -25,11 +25,11 @@ type TConfigParameter = {
 	},
 	REDIS_HOST: {
 		type: "string",
-		required: true,
+		default: "127.0.0.1",
 	},
 	REDIS_PORT: {
 		type: "number",
-		required: true,
+		default: 6739,
 	}
 };
 
