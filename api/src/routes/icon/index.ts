@@ -23,7 +23,8 @@ async function routes (fastify: FastifyInstance) {
 	 */
 	
 	fastify.get<{Params: IParams;}>('/:icon', routerConfig, async (req, res) => handleRoute(req, res));
-	fastify.get<{Params: IParams;}>('/:icon/:labelBg/:iconColor?', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:icon/:labelBg', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:icon/:labelBg/:iconColor', routerConfig, async (req, res) => handleRoute(req, res));
 }
 
 export default routes;

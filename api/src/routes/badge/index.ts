@@ -45,8 +45,10 @@ async function routes (fastify: FastifyInstance) {
 	/**
 	 * Builds basic badges with only text, background color options
 	 */
-	fastify.get<{Params: IParams;}>('/:label/:msg?', routerConfig, async (req, res) => handleRoute(req, res));
-	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg/:labelBg?', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label/:msg', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg', routerConfig, async (req, res) => handleRoute(req, res));
+	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg/:labelBg', routerConfig, async (req, res) => handleRoute(req, res));
 	fastify.get<{Params: IParams;}>('/:label/:msg/:msgBg/:labelBg/:icon', routerConfig, async (req, res) => handleRoute(req, res));
 }
 
