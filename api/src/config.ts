@@ -30,6 +30,23 @@ type TConfigParameter = {
 	REDIS_PORT: {
 		type: "number",
 		default: 6379,
+	},
+	POSTGRES_URL: {
+		type: "string",
+	},
+	POSTGRES_HOST: {
+		type: "string",
+		default: "127.0.0.1",
+	},
+	POSTGRES_PORT: {
+		type: "number",
+		default: 5432,
+	},
+	POSTGRES_USER: {
+		type: "string",
+	},
+	POSTGRES_PASS: {
+		type: "string",
 	}
 };
 
