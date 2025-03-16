@@ -7,6 +7,7 @@ export default class CustomIconProvider extends IconProvider {
 			name: 'custom',
 			description: 'Custom icon provider, supporting base64 encoding',
 			external: false,
+			cacheKey: "icon_custom_",
 		}
 		
 		super(args);

@@ -9,6 +9,7 @@ export default class SimpleIconsIconProvider extends IconProvider {
 			name: 'simple-icons',
 			description: 'Resolve simple-icons from slug',
 			external: true,
+			cacheKey: 'icon_simple-icons_',
 		}
 		
 		super(args);
