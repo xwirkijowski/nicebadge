@@ -10,7 +10,7 @@
     "start": "node dist/src/main.js",
     "compile-and-start": "npm run compile && npm run start",
     "dev": "tsx watch --tsconfig tsconfig.json ./src/main.ts",
-    "test": "vitest"
+    "test": "vitest --config ./vitest.config.ts"
   },
   "keywords": [],
   "author": "Sebastian Wirkijowski <sebastian@wirkijowski.me> (https://wirkijowski.me/)",
