@@ -51,9 +51,11 @@ server.decorateReply("sendJSON", function (requestId: FastifyRequest['id'], payl
 })
 
 // Autoloader for plugins
+/**
 server.register(FastifyAutoload, {
 	dir: join(__dirname, 'plugins')
 })
+**/
 
 // Autoloader for routes
 server.register(FastifyAutoload, {
