@@ -1,4 +1,5 @@
 import {globalLogger as log} from "@/utils/log";
+import RedisClient from "@/cache/client";
 
 import {IconProvider, IIconProviderArgs} from "@/providers/icon/icon.provider";
 import {Icon} from "@/providers/icon/icon";
@@ -26,7 +27,13 @@ export default class SimpleIconsIconProvider extends IconProvider {
 		log.std(`Resolving icon (${icon.slug}) from simple-icons...`)
 		
 		// Attempt to get cache
-		
+
+		const cached: string|null = await RedisClient.get(this.cacheKey + icon.slug);
+		if (cached) {
+			log.std(`Serving cached icon (${icon.slug}) from simple-icons`)
+			return cached;
+		}
+
 		let data: string;
 		
 		try {
@@ -37,8 +44,10 @@ export default class SimpleIconsIconProvider extends IconProvider {
 			throw e;
 		}
 		
-		if (!data) throw new Error("Icon not found");
-		
+		if (!data || data.startsWith("Couldn't find")) throw new Error("Icon not found");
+
+		await RedisClient.set(this.cacheKey + icon.slug, data);
+
 		return data;
 	}
 }
