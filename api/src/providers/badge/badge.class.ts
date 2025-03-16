@@ -95,14 +95,14 @@ export class Badge {
 	 * @async
 	 */
 	async materialize () {
-		const cached: string|null = await RedisClient.get(`badge_+${this.cacheKey}`);
+		const cached: string|null = await RedisClient.get(`badge_${this.cacheKey}`);
 		if (cached) return cached;
 		
 		if (this.icon) await this.resolveIcon();
 		
 		const svg: string = this.toSVG();
 		
-		await RedisClient.set(`badge_+${this.cacheKey}`, svg);
+		await RedisClient.set(`badge_${this.cacheKey}`, svg);
 		
 		return svg;
 	}
