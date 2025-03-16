@@ -29,7 +29,7 @@ type TConfigParameter = {
 	},
 	REDIS_PORT: {
 		type: "number",
-		default: 6739,
+		default: 6379,
 	}
 };
 
