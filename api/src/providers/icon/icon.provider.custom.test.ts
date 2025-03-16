@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest'
+import { expect, test, describe } from 'vitest';
 import CustomIconProvider from "@/providers/icon/icon.provider.custom";
 import {Icon} from "@/providers/icon/icon";
 
