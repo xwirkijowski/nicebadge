@@ -25,11 +25,11 @@ class NiceBadge {
 	registerIconProviders (): void {
 		const directory: string = join(__dirname, "providers/icon");
 		const providers: string[] = readdirSync(directory)
-			.filter(file => !!file.match(/^icon\.provider\..+\.ts$/));
+			.filter(file => !!file.match(/^icon\.provider\.(.+)(?<!test)\.ts$/));
 		
 		for (const module of providers) {
 			const {default: ProviderClass} = require(join(directory, module));
-			
+
 			// Check if ProviderClass extends IconProvider
 			if (Object.getPrototypeOf(ProviderClass.prototype).constructor.name === IconProvider.prototype.constructor.name) {
 				const provider = new ProviderClass()
