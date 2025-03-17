@@ -74,7 +74,7 @@ server.get('/', async (_, res): Promise<void> => {
 	res.status(200).json({'message': 'Hello World!'});
 })
 
-NiceBadge.registerIconProviders();
+await NiceBadge.registerIconProviders();
 
 server.listen(({
 	port: config.PORT as number,
