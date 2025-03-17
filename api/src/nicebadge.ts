@@ -1,11 +1,10 @@
-import {createRequire} from 'module';
+import {pathToFileURL} from "node:url";
 import {readdirSync} from "node:fs";
 import {join, dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 
 import {IconProvider, TIconProvider} from "@/providers/icon/icon.provider";
 
-const require: NodeJS.Require = createRequire(import.meta.url);
 const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
 class NiceBadge {
@@ -22,14 +21,14 @@ class NiceBadge {
 	setStartTimestamp(date: Date): void {this.timestampStart = date;}
 	setListenTimestamp (date: Date): void {this.timestampListen = date;}
 	
-	registerIconProviders (): void {
+	async registerIconProviders (): Promise<void> {
 		const directory: string = join(__dirname, "providers/icon");
 		const providers: string[] = readdirSync(directory)
 			.filter((file: string): boolean => !!file.match(/^icon\.provider\.(.+)(?<!test)\.ts$/));
 		
 		for (const module of providers) {
-			const {default: ProviderClass} = require(join(directory, module));
-
+			const {default: ProviderClass} = await import(pathToFileURL(join(directory, module)).href);
+			
 			// Check if ProviderClass extends IconProvider
 			if (Object.getPrototypeOf(ProviderClass.prototype).constructor.name === IconProvider.prototype.constructor.name) {
 				const provider = new ProviderClass()
@@ -49,7 +48,7 @@ class NiceBadge {
 	}
 }
 
-const singleton = new NiceBadge();
+const singleton: NiceBadge = new NiceBadge();
 export default singleton;
 
 export type RegisteredIconProviders = typeof singleton.iconProviderNames[number];
