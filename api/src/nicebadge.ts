@@ -25,7 +25,7 @@ class NiceBadge {
 	registerIconProviders (): void {
 		const directory: string = join(__dirname, "providers/icon");
 		const providers: string[] = readdirSync(directory)
-			.filter(file => !!file.match(/^icon\.provider\.(.+)(?<!test)\.ts$/));
+			.filter((file: string): boolean => !!file.match(/^icon\.provider\.(.+)(?<!test)\.ts$/));
 		
 		for (const module of providers) {
 			const {default: ProviderClass} = require(join(directory, module));
