@@ -48,9 +48,13 @@ server.addHook('onSend', function (req, res, payload, done) {
 	done()
 });
 
+server.addHook('onRequest', (req, _, done) => {
+	log.request(req.id, req.url);
+	done();
+})
+
 server.addHook('onResponse', (req, res, done) => {
-	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url);
-	
+	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`);
 	done();
 })
 
