@@ -32,15 +32,18 @@ server.register(FastifyHelmet, {
 })
 
 server.addHook('onSend', function (req, res, payload, done) {
-	if (res.getHeader("Content-Type") === "application/json") {
+	const type = res.getHeader("Content-Type") as string;
+	
+	// @todo: Replace with a more efficient solution, maybe go back to decorate
+	if (type.includes('application/json')) {
 		const newPayload = {
 			status: res.statusCode,
-			data: payload,
+			data: JSON.parse(payload as string),
 			metadata: {
 				requestId: req.id
 			}
 		}
-		done(null, newPayload);
+		done(null, JSON.stringify(newPayload));
 	}
 	done()
 });
