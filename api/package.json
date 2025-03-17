@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "compile": "tsc && tsc-alias",
-    "start": "node dist/src/main.js",
+    "start": "node dist/main.js",
     "compile-and-start": "npm run compile && npm run start",
     "dev": "tsx watch --tsconfig tsconfig.json ./src/main.ts",
     "test": "vitest --config ./vitest.config.ts"
