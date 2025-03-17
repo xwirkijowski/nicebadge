@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
 import {Icon} from "../icon/icon";
+import {globalLogger as log} from "@/utils/log";
 import {RedisClient} from "@/databases/redis";
 
 type TBadgeSize = {
@@ -95,8 +96,13 @@ export class Badge {
 	 * @async
 	 */
 	async materialize (): Promise<string|null> {
+		log.std(`Materializing ${this.cacheKey} badge...`);
+		
 		const cached: string|null = await RedisClient.get(`badge_${this.cacheKey}`);
-		if (cached) return cached;
+		if (cached) {
+			log.std(`Serving cached ${this.cacheKey} badge`);
+			return cached;
+		}
 		
 		if (this.icon) await this.resolveIcon();
 		

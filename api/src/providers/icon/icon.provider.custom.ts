@@ -1,3 +1,4 @@
+import {globalLogger as log} from "@/utils/log";
 import {IconProvider, IIconProviderArgs} from "@/providers/icon/icon.provider";
 import {Icon} from "@/providers/icon/icon";
 
@@ -17,6 +18,8 @@ export default class CustomIconProvider extends IconProvider {
 		if (!icon) throw new Error("No icon provided");
 		if (!icon?.encoded) throw new Error("No encoded data provided");
 		if (!icon.encoded.startsWith("data:image/svg")) throw new Error("Malformed or invalid data provided");
+		
+		log.std(`Resolving ${icon.slug} icon with ${this.name}...`)
 		
 		const encodedData: string = icon.encoded!;
 		const encodedContent: string|undefined = encodedData.split(",")?.[1]?.replaceAll(" ", "+");

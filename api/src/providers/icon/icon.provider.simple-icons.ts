@@ -1,6 +1,5 @@
 import {globalLogger as log} from "@/utils/log";
 import {RedisClient} from "@/databases/redis";
-
 import {IconProvider, IIconProviderArgs} from "@/providers/icon/icon.provider";
 import {Icon} from "@/providers/icon/icon";
 
@@ -24,18 +23,16 @@ export default class SimpleIconsIconProvider extends IconProvider {
 		if (!icon) throw new Error("No icon provided");
 		if (!icon?.slug) throw new Error("No icon slug provided");
 		
-		log.std(`Resolving icon (${icon.slug}) from simple-icons...`)
-		
-		// Attempt to get cache
+		log.std(`Resolving ${icon.slug} icon with ${this.name}...`)
 
 		const cached: string|null = await RedisClient.get(this.cacheKey + icon.slug);
 		if (cached) {
-			log.std(`Serving cached icon (${icon.slug}) from simple-icons`)
+			log.std(`Serving cached ${icon.slug} ${this.name} icon`);
 			return cached;
 		}
+		
 
 		let data: string;
-		
 		try {
 			const response = await fetch(this.getFetchUrl(icon.slug!));
 			data = await response.text();
