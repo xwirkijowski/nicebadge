@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import {Canvas, CanvasRenderingContext2D, createCanvas, TextMetrics} from "canvas";
 import {Icon} from "../icon/icon";
-import RedisClient from "@/cache/client";
+import {RedisClient} from "@/databases/redis";
 
 type TBadgeSize = {
 	paddingX: number;

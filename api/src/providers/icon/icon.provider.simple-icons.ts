@@ -1,5 +1,5 @@
 import {globalLogger as log} from "@/utils/log";
-import RedisClient from "@/cache/client";
+import {RedisClient} from "@/databases/redis";
 
 import {IconProvider, IIconProviderArgs} from "@/providers/icon/icon.provider";
 import {Icon} from "@/providers/icon/icon";
