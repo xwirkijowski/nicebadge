@@ -30,7 +30,7 @@ const config: Config = {
 	levels: [
 		{
 			label: 'success',
-			prefix: `\x1b[32m[success]\x1b[0m`, // Green
+			prefix: `\x1b[42m SUCCESS \x1b[0m`, // Green
 			format: ['\x1b[90m', '\x1b[0m'], // Green
 			logToFile: true,
 		},
@@ -68,28 +68,28 @@ const config: Config = {
 		{ // Information
 			label: 'info',
 			consoleMethodName: 'info',
-			prefix: '\x1b[34m[info]\x1b[0m',
+			prefix: '\x1b[44m INFO \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: true,
 		},
 		{
 			label: 'request',
 			consoleMethodName: 'log',
-			prefix: '\x1b[36m[<--]\x1b[0m',
+			prefix: '\x1b[46m REQ \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: "request",
 		},
 		{
 			label: 'response',
 			consoleMethodName: 'log',
-			prefix: '\x1b[35m[-->]\x1b[0m',
+			prefix: '\x1b[45m RES \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: "response",
 		},
 		{
 			label: 'std',
 			consoleMethodName: 'log',
-			prefix: '\x1b[90m[log]\x1b[0m',
+			prefix: '\x1b[100m LOG \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: true,
 		},
