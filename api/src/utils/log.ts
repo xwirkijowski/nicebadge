@@ -75,14 +75,14 @@ const config: Config = {
 		{
 			label: 'request',
 			consoleMethodName: 'log',
-			prefix: '\x1b[46m REQ \x1b[0m',
+			prefix: '\x1b[45m REQ \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: "request",
 		},
 		{
 			label: 'response',
 			consoleMethodName: 'log',
-			prefix: '\x1b[45m RES \x1b[0m',
+			prefix: '\x1b[46m RES \x1b[0m',
 			format: ['\x1b[90m', '\x1b[0m'],
 			logToFile: "response",
 		},
