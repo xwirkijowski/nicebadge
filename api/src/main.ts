@@ -1,7 +1,7 @@
 import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import {v4 as uuid} from "uuid";
-import Fastify, {FastifyRequest} from "fastify";
+import Fastify from "fastify";
 import FastifyAutoload from "@fastify/autoload";
 import FastifyHelmet from "@fastify/helmet";
 import config, {configPerformance, configTimeStamp} from "@/config";
@@ -10,7 +10,7 @@ import { globalLogger as log } from "@/utils/log";
 
 declare module 'fastify' {
 	interface FastifyReply {
-		sendJSON: (req: FastifyRequest['id'], payload: object) => void
+		json: (payload: object) => void
 	}
 }
 
@@ -31,6 +31,20 @@ server.register(FastifyHelmet, {
 	global: true,
 })
 
+server.addHook('onSend', function (req, res, payload, done) {
+	if (res.getHeader("Content-Type") === "application/json") {
+		const newPayload = {
+			status: res.statusCode,
+			data: payload,
+			metadata: {
+				requestId: req.id
+			}
+		}
+		done(null, newPayload);
+	}
+	done()
+});
+
 server.addHook('onResponse', (req, res, done) => {
 	log.response(req.id, res.statusCode, `${(res.elapsedTime / 100).toFixed(2)} ms`, req.url);
 	
@@ -38,16 +52,9 @@ server.addHook('onResponse', (req, res, done) => {
 })
 
 // @todo: Switch to hook
-server.decorateReply("sendJSON", function (requestId: FastifyRequest['id'], payload: object) {
-	this.status(200);
+server.decorateReply("json", function (payload: object) {
 	this.type("application/json");
-	this.send({
-		status: this.statusCode,
-		data: payload,
-		metadata: {
-			requestId,
-		}
-	});
+	this.send(payload);
 })
 
 // Autoloader for plugins
@@ -63,8 +70,8 @@ server.register(FastifyAutoload, {
 })
 
 // Root endpoint
-server.get('/', async (req, res) => {
-	res.sendJSON(req.id, {'message': 'Hello World!'});
+server.get('/', async (_, res): Promise<void> => {
+	res.status(200).json({'message': 'Hello World!'});
 })
 
 NiceBadge.registerIconProviders();
