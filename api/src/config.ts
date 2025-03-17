@@ -1,4 +1,5 @@
-import { globalLogger as log } from "@/utils/log";
+import {globalLogger as log} from "@/utils/log";
+import {NiceError} from "@/utils/error";
 
 export const configTimeStamp: Date = new Date();
 export const configPerformance: number = performance.now();
@@ -45,7 +46,7 @@ function parseConfigValue (name: string, param: TConfigParameter, value: string)
 			const num: number = Number(value);
 			if (isNaN(num)) {
 				log.fatal(`Failed to parse ${name} environment variable value, received ${value}, shutting down...`);
-				throw new Error(`Invalid parameter "${name}" value, ${value}`);
+				throw new NiceError('CONFIG_PARAM_NAN', `Invalid parameter "${name}" value, ${value}`);
 			}
 			return num;
 		default:
@@ -79,4 +80,4 @@ for (const [name, param] of Object.entries(configParameters)) {
 
 log.info(`Config loaded in ${(performance.now() - configPerformance).toFixed(2)} ms.`)
 
-export default config;
+export default Object.freeze(config);
