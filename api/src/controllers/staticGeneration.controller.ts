@@ -5,10 +5,10 @@ import {globalLogger as log} from "@/utils/log";
 export async function handleRoute (req: FastifyRequest, res: FastifyReply, source: 'params'|'query' = 'params'): Promise<void> {
 	try {
 		const badge = new Badge(req[source]);
-		const badgeMaterialized: string = await badge.materialize()
+		const badgeMaterialized: string|null = await badge.materialize();
 		
-		if (!badge.materialized) {
-			// @todo: res specific error
+		if (!badgeMaterialized) {
+			res.code(500).json({'message': "Unexpected error occurred during rendering"});
 		}
 		
 		res.code(200).type("image/svg+xml").send(badgeMaterialized);
